@@ -34,4 +34,6 @@ bool has_illegal_char(string expression);
 bool Is_Expression_Legal(p_opr_stack s, string expression);
 bool manage_plus_decrease(string &expression);
 double manage_calculate(string &expression, bool show , int  precision);
+double merge_for_ic(double num1, double num2);
+double manage_pow(string &expression);
 #endif

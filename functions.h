@@ -24,9 +24,6 @@ bool destory(p_opr_stack top);//销毁栈
 bool is_opr(char opr);//判断是否是操作符
 bool double_to_str(string &str, double d_number, int PRECISION);//将double数字转换为string
 void calculate(double *answer, double tmp1, double tmp2, char opr);//一次计算
-int find_index(const string &expression);//找下标
-int find_first(const string &expression);//找第一个‘）’
-int find_first(const string &expression, int begin, char c = '(');//指定开始位置找第一个
 bool is_num(char c);//判断是否是数字
 double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression);//前提：表达式无误，无括号
 bool has_illegal_char(string expression);//判断是否含有非法字符

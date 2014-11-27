@@ -228,37 +228,6 @@ void calculate(double *answer, double tmp2, double tmp1, char opr)
     }
 }
 
-int find_index(const string &expression)
-{
-    int index(-1);
-    char c;
-    operator_stack tmp;
-    init(&tmp);
-    while(++index < expression.size())
-    {
-        if(expression[index] == '(')
-           push(&tmp, '(');
-        else if(expression[index] == ')')
-        {
-            pop(&tmp, &c);
-            if(is_empty(&tmp))
-                return index;
-        }
-    }
-    return index;
-}
-
-int find_first(const string &expression)
-{
-        int index(0);
-        while(++index < expression.size())
-        {
-            if(expression[index] == ')')
-                return index;
-        }
-        return index;
- }
- 
  bool has_illegal_char(string expression)
 {
     int i(0);

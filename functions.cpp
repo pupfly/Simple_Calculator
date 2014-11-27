@@ -278,7 +278,7 @@ int find_first(const string &expression)
  bool Is_Expression_Legal(p_opr_stack s, string expression)
 {
     if(has_illegal_char(expression))
-    return false;
+        return false;
 
     if(expression[0] == '*')
     {
@@ -514,43 +514,42 @@ int find_first(const string &expression)
     i = 0;
     while(i != expression.size())
     {
-	if (expression[i] == '{' || expression[i] == '[' || expression[i] == '(')
-	{
-		push(s, expression[i]);
-	}
-	if (expression[i] == '}' || expression[i] == ']' || expression[i] == ')')
-	{
-		pop(s, &c);
-		switch(expression[i])
-		{
-		case '}':
-			if (c != '{')
-			{
-				cout<<"Illegal, error }\n";
-				return false;
-			}
-			break;
-		case ']':
-			if (c != '[')
-			{
-				cout<<"Illegal, error ]\n";
-				return false;
-			}
-			break;
-		case ')':
-			if (c != '(')
-			{
-				cout<<"Syntax error,Unecessary \") !\"\n";
-				return false;
-			}
-			break;
-		}
-	}
-	i++;
+	    if (expression[i] == '{' || expression[i] == '[' || expression[i] == '(')
+	    {
+		    push(s, expression[i]);
+	    }
+	    if (expression[i] == '}' || expression[i] == ']' || expression[i] == ')')
+	    {
+		    pop(s, &c);
+    		switch(expression[i])
+	    	{
+		        case '}':
+			        if (c != '{')
+			        {
+				        cout<<"Illegal, error }\n";
+				        return false;
+			        }
+			    break;
+		        case ']':
+			        if (c != '[')
+			        {
+				        cout<<"Illegal, error ]\n";
+				        return false;
+		        	}
+			    break;
+		        case ')':
+			        if (c != '(')
+			    {
+				    cout<<"Syntax error,Unecessary \") !\"\n";
+				    return false;
+			    }
+			    break;
+		    }
+	    }
+	    i++;
 	}
 	if (is_empty(s))
 	{
-		//cout<<"Legal\n";
 		return true;
 	}
     else
@@ -784,10 +783,7 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
                 pop(&number_stack_final, &temp1);
                 pop(&number_stack_final, &temp2);
                 pop(&operator_stack_final, &operate);
-    //            if(operate == '-')
-      //              calculate(&answer, temp1, temp2, operate);
-        //        else
-                    calculate(&answer, temp2, temp1, operate);
+                calculate(&answer, temp2, temp1, operate);
                 push(&number_stack_final, answer);
             }
             destory(&number_stack_final);
@@ -828,9 +824,6 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
         pop(&number_stack_final, &temp1);
         pop(&number_stack_final, &temp2);
         pop(&operator_stack_final, &operate);
-       // if(operate == '-')
-         //   calculate(&answer, temp1, temp2, operate);
-        //else
         calculate(&answer, temp2, temp1, operate);
         push(&number_stack_final, answer);
     }

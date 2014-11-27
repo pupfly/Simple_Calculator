@@ -25,60 +25,60 @@ int main()
     cout<<">>:";
     while(cin>>expression)
     {
-      if (expression == "h")
-	print_help();
-      else if(expression == "on")
-      {
-	show = true;
-	cout<<"Open step by step , it's useful when parenthesis exists !"<<endl;
-      }
-      else if(expression == "off")
-      {
-	show = false;
-	cout<<"Close step by step !"<<endl;
-      }
-      else if(expression == "p")
-      {
-	cout<<"Setting precision...\n"<<"The precision takes effect only when parenthesis exists . Key  in q to quit !"<<endl;
-	string temp, num("0123456789");
-	string::size_type pos(0);
-	cout<<"set precision to:";
-	while(cin>>temp)
-	{
-	  if (temp == "q")
-	    break;
-	  pos = temp.find_first_not_of(num);
-	  if(pos != string::npos)
-	  {
-	    cout<<"Bad input,Only number will be accepted,Try again!"<<endl;
-	    continue;
-	  }
-	  else
-	  {
-	    precision = atoi(temp.c_str());
-	    cout<<"Precision has been set to "<<precision<<" !"<<endl;
-	    break;
-	  }
-	}
-      }
-      else if(expression == "q")
-      {
-	cout<<"Program Terminated!"<<endl;
-	break;
-      }
-      else if (!Is_Expression_Legal(&opr_for_check, expression))
-      {
-	cout<<">>:";
-	continue;
-      }
-      else
-      {
-	manage_plus_decrease(expression);
-	if(show == true)
-	  cout<<"Steps: "<<endl;
-	cout<<"answer = "<<manage_calculate(expression, show, precision)<<endl;
-      }
-      cout<<">>:";
+        if (expression == "h")
+	        print_help();
+        else if(expression == "on")
+        {
+	        show = true;
+	        cout<<"Open step by step , it's useful when parenthesis exists !"<<endl;
+        }
+        else if(expression == "off")
+        {
+	        show = false;
+	        cout<<"Close step by step !"<<endl;
+        }
+        else if(expression == "p")
+        {
+	        cout<<"Setting precision...\n"<<"The precision takes effect only when parenthesis exists . Key  in q to quit !"<<endl;
+	        string temp, num("0123456789");
+	        string::size_type pos(0);
+	        cout<<"set precision to:";
+	        while(cin>>temp)
+	        {
+	            if (temp == "q")
+	                break;
+	            pos = temp.find_first_not_of(num);
+	            if(pos != string::npos)
+	            {
+	                cout<<"Bad input,Only number will be accepted,Try again!"<<endl;
+	                 continue;
+	            }
+	            else
+	            {
+	                precision = atoi(temp.c_str());
+	                cout<<"Precision has been set to "<<precision<<" !"<<endl;
+	                break;
+	            }
+	        }
+        }
+        else if(expression == "q")
+        {
+    	    cout<<"Program Terminated!"<<endl;
+	        break;
+        }
+        else if (!Is_Expression_Legal(&opr_for_check, expression))
+        {
+	        cout<<">>:";
+    	    continue;
+        }
+        else
+        {
+	        manage_plus_decrease(expression);
+	        if(show == true)
+	            cout<<"Steps: "<<endl;
+	        cout<<"answer = "<<manage_calculate(expression, show, precision)<<endl;
+        }
+        cout<<">>:";
     }
     return 0;
 }

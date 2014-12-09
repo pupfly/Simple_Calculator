@@ -5,6 +5,7 @@
 	> Created Time: 2014年11月18日 星期二 21时46分56秒
  ************************************************************************/
 #include "struct.h"
+#include <math.h>
 #ifndef _FUNCTIONS_H
 #define _FUNCTIONS_H
 
@@ -31,5 +32,5 @@ bool Is_Expression_Legal(p_opr_stack s, string expression);//判断表达式是�
 bool manage_plus_decrease(string &expression);//处理粘连的加减号
 double manage_calculate(string &expression, bool show , int  precision);//处理含有括号的表达式
 double merge_for_ic(double num1, double num2);//自定义的“电阻的并”运算
-double manage_pow(string &expression);//处理幂运算，状态：待实现
+bool add_priority_for_pow(string &expression);//处理幂运算
 #endif

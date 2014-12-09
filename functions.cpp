@@ -18,7 +18,7 @@ void print_help()
   cout<<"<5>:Key in q to terminate this program;"<<endl;
   cout<<"\n   >>>>>>>>>>Important tips<<<<<<<<<<<<"<<endl;
   cout<<"\n    \"++...\" , \"--...\" and \"+-+-...\" are\nsupported !";
-  cout<<" This program will not take numbers\nbegin with the  charactor \".\", it only supports\noperator \"+ - * / |\",'|' merges two resistance .\nThis program accepts parenthesis\"()\".Expressions\nwith syntax error also will be refused . Highest \nprecision is equal to size double .Maybe you will\ncome across these circumstance later ,so,just be\ncareful !"<<endl;
+  cout<<" This program will not take numbers\nbegin with the  charactor \".\", it only supports\noperator \"+ - * / | ^\",'|' merges two resistances .\nThis program accepts parenthesis\"()\".Expressions\nwith syntax error also will be refused . Highest \nprecision is equal to size double .Maybe you will\ncome across these circumstance later ,so,just be\ncareful !"<<endl;
   cout<<"Any questions , Mail:792570367@qq.com , Thanks !"<<endl;
   cout<<"--------------------exit------------------------"<<endl;
 }
@@ -223,6 +223,9 @@ void calculate(double *answer, double tmp2, double tmp1, char opr)
         break;
         case '|':
             (*answer) = merge_for_ic(tmp2, tmp1);
+        break;
+        case '^':
+            (*answer) = pow(tmp2, tmp1);
         break;
         default:break;
     }
@@ -552,7 +555,7 @@ bool manage_plus_decrease(string &expression)
             }
             if((i + 1) == expression.size())
                 return false;
-            else if((expression[i + 1] == '-') || ((i > 0) && ((expression[i - 1] == '-') || (expression[i - 1] == '*') || (expression[i - 1] == '/'))))
+            else if((expression[i + 1] == '-') || ((i > 0) && ((expression[i - 1] == '-') || (expression[i - 1] == '*') || (expression[i - 1] == '^') || (expression[i - 1] == '/') || (expression[i - 1] == '|'))))
                 expression.erase(back,1);
         }
         i++;
@@ -598,7 +601,7 @@ bool manage_plus_decrease(string &expression)
             }
             if((i + 1) == expression.size())
                 return false;
-            else if((expression[i + 1] == '-') || ((i > 0) && ((expression[i - 1] == '-') || (expression[i - 1] == '*') || (expression[i - 1] == '/'))))
+            else if((expression[i + 1] == '-') || ((i > 0) && ((expression[i - 1] == '-') || (expression[i - 1] == '*') || (expression[i - 1] == '|') || (expression[i - 1] == '^') || (expression[i - 1] == '/'))))
                 expression.erase(back,1);
         }
         i++;
@@ -606,9 +609,110 @@ bool manage_plus_decrease(string &expression)
     return true;
 }
  
-double manage_pow(string &expression)
+bool add_priority_for_pow(string &expression)//修正幂运算符号“^”的优先级，由manage_calculate函数调用
 {
-    int front(-1);
+    int iter(-1), position(0);
+    char temp;
+    operator_stack opr_top;
+    init(&opr_top);
+
+    manage_plus_decrease(expression);
+
+    while(++iter != expression.size())
+    {
+        if (expression[iter] == '^')
+        {
+            position = iter;
+
+            //添加后面的括号
+            if (expression[iter + 1] == '+' || expression[iter + 1] == '-' || is_num(expression[iter + 1]))
+            {
+                iter += 2;
+                while (iter != expression.size() && is_num(expression[iter])) iter++;
+                expression.insert(iter, 1, ')');
+            }
+            else if (expression[iter + 1] == '(')
+            {
+                while(++iter != expression.size())
+                {
+                    if (expression[iter] == '(')
+                        push(&opr_top,'(');
+                    else if (expression[iter] == ')')
+                    {
+                        pop(&opr_top,&temp);
+                        if (is_empty(&opr_top))
+                            break;
+                    }
+                }
+                if (is_empty(&opr_top))
+                {
+                    expression.insert(iter, 1, ')');
+                }
+                else
+                {
+                    destory(&opr_top);
+                    return false;
+                }
+            }
+            //添加前面的括号
+            iter = position;
+            if (is_num(expression[iter - 1]))
+            {
+                iter--;
+                while((iter != 0) && is_num(expression[iter])) iter--;
+                if(iter != 0)
+                {
+                    expression.insert(iter + 1, 1, '(');
+                    iter = position + 1;
+                }
+                else
+                {
+                    expression.insert(iter, 1, '(');
+                    iter = position + 1;
+                }
+            }
+            else if(expression[iter - 1] == ')')
+            {
+                while(iter != 0)
+                {
+                    if (expression[iter] == ')')
+                        push(&opr_top,')');
+                    else if (expression[iter] == '(')
+                    {
+                        pop(&opr_top,&temp);
+                        if(is_empty(&opr_top))
+                            break;
+                    }
+                    iter--;
+                }
+                if (iter == 0)
+                {
+                    if (expression[iter] == '(')
+                    {
+                        pop(&opr_top,&temp);
+                        if(is_empty(&opr_top))
+                        {
+                            expression.insert(iter, 1, '(');
+                            iter = position + 1;
+                        }
+                        else
+                        {
+                            destory(&opr_top);
+                            return false;
+                        }
+                    }
+                }
+                else if (is_empty(&opr_top))
+                {
+                    expression.insert(iter, 1, '(');
+                    iter = position + 1;
+                }
+                else
+                    return false;
+            }
+        }
+    }
+    return true;
 }
 
 double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)//前提：表达式无误
@@ -625,7 +729,7 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
     char operate;
     bool is_end(false);
     
-    if(((m_d = expression.find("*")) != string::npos) || ((m_d = expression.find("/")) != string::npos) ||((m_d = expression.find("|")) != string::npos))
+    if(((m_d = expression.find("*")) != string::npos) || ((m_d = expression.find("/")) != string::npos) ||((m_d = expression.find("|")) != string::npos) ||((m_d = expression.find("^")) != string::npos))
         has_not_plus_dec = true;
 
     number_stack number_stack_final;
@@ -645,7 +749,7 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
         string temp_str = expression.substr(back, (front - back));
         if((expression[front] != '(') && (expression[front - 1] != ')'))
         {
-            if((front > 0) && (expression[front] == '-') && (is_num(expression[front + 1])) && ((expression[front - 1] == '*') || (expression[front - 1] == '/') || (expression[front - 1] == '|')))
+            if((front > 0) && (expression[front] == '-') && (is_num(expression[front + 1])) && ((expression[front - 1] == '*') || (expression[front - 1] == '/') || (expression[front - 1] == '|') || (expression[front - 1] == '^')))
             {
                 while((++front != expression.size()) && (!is_opr(expression[front])));
                 temp_str = expression.substr(back, (front - back));
@@ -687,7 +791,7 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
                 push(opr_top, expression[front]);
                 continue;
             }
-            else if((operate == '*') || (operate == '/') || (operate == '|'))
+            else if((operate == '*') || (operate == '/') || (operate == '|') ||(operate == '^'))
             {
                 pop(num_top, &temp1);
                 pop(num_top, &temp2);
@@ -698,10 +802,10 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
                 continue;
             }
         }
-        if((expression[front] == '*') || (expression[front] == '/') || (expression[front] == '|'))
+        if((expression[front] == '*') || (expression[front] == '/') || (expression[front] == '|') || (expression[front] == '^'))
         {
             get_top(opr_top, &operate);
-            if((operate == '*') || (operate == '/') || (operate == '|'))
+            if((operate == '*') || (operate == '/') || (operate == '|') || (operate == '^'))
             {
                 pop(num_top, &temp1);
                 pop(num_top, &temp2);
@@ -727,7 +831,7 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
                 return answer;
             }
             get_top(opr_top,&operate);
-            if((operate == '*') || (operate == '/') || (operate == '|'))
+            if((operate == '*') || (operate == '/') || (operate == '|') || (operate == '^'))
             {
                 pop(num_top, &temp1);
                 pop(num_top, &temp2);
@@ -768,7 +872,7 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
         return answer;
     }
     get_top(opr_top,&operate);
-    if((operate == '*') || (operate == '/') || (operate == '|'))
+    if((operate == '*') || (operate == '/') || (operate == '|') || (operate == '^'))
     {
         pop(num_top, &temp1);
         pop(num_top, &temp2);
@@ -814,6 +918,8 @@ double manage_calculate(string &expression, bool show, int  precision)
     init(&virtual_bracket);
     init(&numbers);
     init(&operators);
+    add_priority_for_pow(expression);
+
     while(front < expression.size())
     {
         manage_plus_decrease(expression);

@@ -20,6 +20,8 @@ bool pop(p_num_stack top, double *num);//出栈
 bool pop(p_opr_stack top, char *opr);//出栈
 bool init(p_num_stack top);//栈初始化
 bool init(p_opr_stack top);//栈初始化
+bool stack_reverse(p_num_stack top);//栈的逆序
+bool stack_reverse(p_opr_stack top);//栈的逆序
 bool destory(p_num_stack top);//销毁栈
 bool destory(p_opr_stack top);//销毁栈
 bool is_opr(char opr);//判断是否是操作符
@@ -32,5 +34,5 @@ bool Is_Expression_Legal(p_opr_stack s, string expression);//判断表达式是�
 bool manage_plus_decrease(string &expression);//处理粘连的加减号
 double manage_calculate(string &expression, bool show , int  precision);//处理含有括号的表达式
 double merge_for_ic(double num1, double num2);//自定义的“电阻的并”运算
-bool add_priority_for_pow(string &expression);//处理幂运算
+bool add_priority(string &expression, char opr);//为某特定运算添加优先级
 #endif

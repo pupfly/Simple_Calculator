@@ -11,18 +11,16 @@ using namespace std;
 
 int main()
 {
-    number_stack num_top;
-    operator_stack opr_top;
     operator_stack opr_for_check;
     string expression;
     bool show(false);
     int precision(6);
-    init(&num_top);
-    init(&opr_top);
+
     init(&opr_for_check);
     
     cout<<"Key in an order or an expression to compute , press \"h\" for help !"<<endl;
     cout<<">>:";
+
     while(cin>>expression)
     {
         if (expression == "h")
@@ -46,7 +44,7 @@ int main()
 	        while(cin>>temp)
 	        {
 	            if (temp == "q")
-	                break;
+                    break;
 	            pos = temp.find_first_not_of(num);
 	            if(pos != string::npos)
 	            {
@@ -63,11 +61,13 @@ int main()
         }
         else if(expression == "q")
         {
+            destory(&opr_for_check);
     	    cout<<"Program Terminated!"<<endl;
 	        break;
         }
         else if (!Is_Expression_Legal(&opr_for_check, expression))
         {
+            destory(&opr_for_check);
 	        cout<<">>:";
     	    continue;
         }

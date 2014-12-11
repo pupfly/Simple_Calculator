@@ -118,10 +118,55 @@ bool init(p_opr_stack top)
     return true;
 }
 
-bool destory(p_num_stack top)
+bool stack_reverse(p_num_stack top)
 {
     if (top->next == NULL)
-    return true;
+        return true;
+    p_num_stack p1, p2;
+    p1 = top->next;
+    if (p1->next != NULL)
+    {
+        p2 = p1->next;
+        top->next = NULL;
+    }
+    else
+        return true;
+    while (p1 != NULL)
+    {
+        p1->next = top->next;
+        top->next = p1;
+        p1 = p2;
+        if (p2 != NULL)
+            p2 = p2->next;
+    }
+}
+bool stack_reverse(p_opr_stack top)
+{
+    if (top->next == NULL)
+        return true;
+    p_opr_stack p1, p2;
+    p1 = top->next;
+    if (p1->next != NULL)
+    {
+        p2 = p1->next;
+        top->next = NULL;
+    }
+    else
+        return true;
+    while (p1 != NULL)
+    {
+        p1->next = top->next;
+        top->next = p1;
+        p1 = p2;
+        if (p2 != NULL)
+            p2 = p2->next;
+    }
+}
+
+bool destory(p_num_stack top)
+{
+    if (is_empty(top))
+        return true;
     p_num_stack temp;
     while(top->next != NULL)
     {
@@ -129,13 +174,19 @@ bool destory(p_num_stack top)
         top->next = temp->next;
         delete temp;
     }
-    return true;
+    if (is_empty(top))
+        return true;
+    else
+    {
+        cout<<"Destory Number Stack Error !"<<endl;
+        return false;
+    }
 }
 
 bool destory(p_opr_stack top)
 {
-    if (top->next == NULL)
-    return true;
+    if (is_empty(top))
+        return true;
     p_opr_stack temp;
     while(top->next != NULL)
     {
@@ -143,7 +194,13 @@ bool destory(p_opr_stack top)
         top->next = temp->next;
         delete temp;
     }
-    return true;
+    if (is_empty(top))
+        return true;
+    else
+    {
+        cout<<"Destory Operator Stack Error !"<<endl;
+        return false;
+    }
 }
 
 bool is_opr(char opr)
@@ -512,7 +569,7 @@ void calculate(double *answer, double tmp2, double tmp1, char opr)
 		        case ')':
 			        if (c != '(')
 			    {
-				    cout<<"Syntax error,Unecessary \") !\"\n";
+				    cout<<"Syntax error,Unecessary \")\" !\n";
 				    return false;
 			    }
 			    break;
@@ -609,7 +666,7 @@ bool manage_plus_decrease(string &expression)
     return true;
 }
  
-bool add_priority_for_pow(string &expression)//修正幂运算符号“^”的优先级，由manage_calculate函数调用
+bool add_priority(string &expression, char opr)//修正特定运算的优先级，由manage_calculate函数调用
 {
     int iter(-1), position(0);
     char temp;
@@ -620,7 +677,7 @@ bool add_priority_for_pow(string &expression)//修正幂运算符号“^”的�
 
     while(++iter != expression.size())
     {
-        if (expression[iter] == '^')
+        if (expression[iter] == opr)
         {
             position = iter;
 
@@ -718,7 +775,6 @@ bool add_priority_for_pow(string &expression)//修正幂运算符号“^”的�
 double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)//前提：表达式无误
 {
     int index_front(0), index_back(0);
-    char t_opr;
 
     string::size_type m_d;
     bool has_not_plus_dec(false);
@@ -732,11 +788,6 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
     if(((m_d = expression.find("*")) != string::npos) || ((m_d = expression.find("/")) != string::npos) ||((m_d = expression.find("|")) != string::npos) ||((m_d = expression.find("^")) != string::npos))
         has_not_plus_dec = true;
 
-    number_stack number_stack_final;
-    operator_stack operator_stack_final;
-
-    init(&number_stack_final);
-    init(&operator_stack_final);
 
     manage_plus_decrease(expression);
     
@@ -839,28 +890,18 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
                 calculate(&answer, temp2, temp1, operate);
                 push(num_top, answer); 
             }
-            while(!is_empty(num_top))
+            stack_reverse(num_top);
+            stack_reverse(opr_top);
+             while((!is_empty(num_top)) && (!is_empty(opr_top)))
             {
                 pop(num_top, &temp1);
-                push(&number_stack_final, temp1);
-            }
-            while(!is_empty(opr_top))
-            {
+                pop(num_top, &temp2);
                 pop(opr_top, &operate);
-                push(&operator_stack_final, operate);
+                calculate(&answer, temp2, temp1, operate);
+                push(num_top, answer);
             }
             destory(num_top);
             destory(opr_top);
-             while((!is_empty(&number_stack_final)) && (!is_empty(&operator_stack_final)))
-            {
-                pop(&number_stack_final, &temp1);
-                pop(&number_stack_final, &temp2);
-                pop(&operator_stack_final, &operate);
-                calculate(&answer, temp2, temp1, operate);
-                push(&number_stack_final, answer);
-            }
-            destory(&number_stack_final);
-            destory(&operator_stack_final);
             return answer;
         }
     }
@@ -880,28 +921,18 @@ double calculator(p_num_stack num_top, p_opr_stack opr_top, string &expression)/
         calculate(&answer, temp2, temp1, operate);
         push(num_top, answer); 
     }
-    while(!is_empty(num_top))
+    stack_reverse(num_top);
+    stack_reverse(opr_top);
+    while((!is_empty(num_top)) && (!is_empty(opr_top)))
     {
         pop(num_top, &temp1);
-        push(&number_stack_final, temp1);
-    }
-    while(!is_empty(opr_top))
-    {
+        pop(num_top, &temp2);
         pop(opr_top, &operate);
-        push(&operator_stack_final, operate);
+        calculate(&answer, temp2, temp1, operate);
+        push(num_top, answer);
     }
     destory(num_top);
     destory(opr_top);
-    while((!is_empty(&number_stack_final)) && (!is_empty(&operator_stack_final)))
-    {
-        pop(&number_stack_final, &temp1);
-        pop(&number_stack_final, &temp2);
-        pop(&operator_stack_final, &operate);
-        calculate(&answer, temp2, temp1, operate);
-        push(&number_stack_final, answer);
-    }
-    destory(&number_stack_final);
-    destory(&operator_stack_final);
     return answer;
 }
 
@@ -918,7 +949,9 @@ double manage_calculate(string &expression, bool show, int  precision)
     init(&virtual_bracket);
     init(&numbers);
     init(&operators);
-    add_priority_for_pow(expression);
+
+    add_priority(expression, '^');
+    add_priority(expression, '|');
 
     while(front < expression.size())
     {

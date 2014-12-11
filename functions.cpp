@@ -139,6 +139,7 @@ bool stack_reverse(p_num_stack top)
         if (p2 != NULL)
             p2 = p2->next;
     }
+    return true;
 }
 bool stack_reverse(p_opr_stack top)
 {
@@ -161,6 +162,7 @@ bool stack_reverse(p_opr_stack top)
         if (p2 != NULL)
             p2 = p2->next;
     }
+    return true;
 }
 
 bool destory(p_num_stack top)

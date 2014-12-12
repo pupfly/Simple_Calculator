@@ -236,7 +236,8 @@ bool double_to_str(string &str, double d_number = 0, int PRECISION = 6)
     str = fcvt(d_number, PRECISION, &decpt, &sign);
     if (d_number != 0)
     {
-        str.insert((string::size_type)decpt, 1, '.');
+        if (PRECISION)
+            str.insert((string::size_type)decpt, 1, '.');
         if(sign == 1)
             str.insert((string::size_type)0, 1, '-');
     }
@@ -954,7 +955,11 @@ double manage_calculate(string &expression, bool show, int  precision)
 
     add_priority(expression, '^');
     add_priority(expression, '|');
-
+    if (expression[0] != '(')
+    {
+        expression.insert(0, 1, '(');
+        expression += ")";
+    }
     while(front < expression.size())
     {
         manage_plus_decrease(expression);
@@ -974,8 +979,8 @@ double manage_calculate(string &expression, bool show, int  precision)
             expression.insert((int)back, temp);
 	        if (show == true)
 	        {
-	            cout<<"<Step "<<steps<<" >:"<<temp_show<<"="<<temp<<endl;
-	            cout<<"expression changed to:"<<expression<<endl;
+	            cout<<"<Step "<<steps<<" >: "<<temp_show<<" = "<<temp<<endl;
+	            cout<<"expression changed to: "<<expression<<endl;
 	        }
             front = back - 1;
         }

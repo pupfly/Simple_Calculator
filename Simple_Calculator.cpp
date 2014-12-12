@@ -37,7 +37,7 @@ int main()
         }
         else if(expression == "p")
         {
-	        cout<<"Setting precision...\n"<<"The precision takes effect only when parenthesis exists . Key  in q to quit !"<<endl;
+	        cout<<"Setting precision...\n"<<"To quit please key in q !"<<endl;
 	        string temp, num("0123456789");
 	        string::size_type pos(0);
 	        cout<<"set precision to:";
@@ -48,7 +48,8 @@ int main()
 	            pos = temp.find_first_not_of(num);
 	            if(pos != string::npos)
 	            {
-	                cout<<"Bad input,Only number will be accepted,Try again!"<<endl;
+	                cout<<"Bad input,Only a positive integer will be accepted,Try again!"<<endl;
+	                cout<<"set precision to:";
 	                 continue;
 	            }
 	            else
